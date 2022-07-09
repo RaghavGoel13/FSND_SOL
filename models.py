@@ -1,12 +1,19 @@
 # ----------------------------------------------------------------------------#
 # Imports
 # ----------------------------------------------------------------------------#
+import os
+
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 
+# For Local testing
+database_path = 'postgresql://postgres:admin@localhost:5432/postgres'
+# database_path = os.environ['DATABASE_URL']
+if database_path[:10] != 'postgresql':
+    database_path = database_path.replace('postgres', 'postgresql')
+print(database_path)
 
-from settings import DB_NAME, DB_USER, DB_PASSWORD
-database_path = "postgresql://{}:{}@{}/{}".format(DB_USER, DB_PASSWORD, 'localhost:5432', DB_NAME)
 db = SQLAlchemy()
 
 
@@ -18,7 +25,8 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+
+
 # ----------------------------------------------------------------------------#
 # Models.
 # ----------------------------------------------------------------------------#
@@ -26,12 +34,12 @@ def setup_db(app, database_path=database_path):
 class Actors(db.Model):
     __tablename__ = 'Actors'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    age = db.Column(db.String(120), nullable=False)
-    gender = db.Column(db.String(120), nullable=False)
-    phone = db.Column(db.String(10), nullable=False)
-    movie_id = db.Column(db.Integer, ForeignKey('Movies.id'), nullable=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    age = Column(String(120), nullable=False)
+    gender = Column(String(120), nullable=False)
+    phone = Column(String(10), nullable=False)
+    movie_id = Column(Integer, ForeignKey('Movies.id'), nullable=True)
 
     def __init__(self, name, gender, age, phone, movie_id):
         self.name = name
@@ -65,11 +73,11 @@ class Actors(db.Model):
 class Movies(db.Model):
     __tablename__ = 'Movies'
 
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, nullable=False)
-    rating = db.Column(db.Integer, nullable=False, default=False)
-    release_date = db.Column(db.DateTime, nullable=False)
-    actors = db.relationship('Actors', backref="Movies", lazy=True)
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+    rating = Column(Integer, nullable=False, default=False)
+    release_date = Column(DateTime, nullable=False)
+    actors = relationship('Actors', backref="Movies", lazy=True)
 
     def __init__(self, title, release_date, rating):
         self.title = title

@@ -1,17 +1,20 @@
 import json
+import os
 from functools import wraps
 from urllib.request import urlopen
 
 from flask import request
 from jose import jwt
 
-from settings import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
-
-# https://fsnd-kml.auth0.com/authorize?audience=capstone&response_type=token&client_id=QgmGth71OqndSVlCJ6YIAFir6t2EAt48&redirect_uri=http://localhost:8100/login-results
+# https://dev-capstone-rv.us.auth0.com/authorize?audience=capstone&response_type=token&client_id=QEGjVKyiIAWR3kNZOxzdq5KhAJGrtVOQ&redirect_uri=https://127.0.0.1:8080/login-result
 '''
 AuthError Exception
 A standardized way to communicate auth failure modes
 '''
+
+AUTH0_DOMAIN = 'dev-capstone-rv.us.auth0.com'
+ALGORITHMS = 'RS256'
+API_AUDIENCE = 'capstone'
 
 
 class AuthError(Exception):
@@ -20,7 +23,6 @@ class AuthError(Exception):
         self.status_code = status_code
 
 
-## Auth Header
 def get_token_auth_header():
     auth = request.headers.get('Authorization', None)
     if not auth:
@@ -126,7 +128,6 @@ def verify_decode_jwt(token):
     }, 403)
 
 
-
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
@@ -135,5 +136,7 @@ def requires_auth(permission=''):
             payload = verify_decode_jwt(token)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
+
         return wrapper
+
     return requires_auth_decorator

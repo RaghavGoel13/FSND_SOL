@@ -24,6 +24,12 @@ def create_app(test_config=None):
             'GET,PUT,POST,DELETE,OPTIONS')
         return response
 
+    @app.route('/', methods={'GET'})
+    def index():
+        return jsonify({
+            'success': True,
+            'message': 'Healthy'
+        })
         #  ----------------------------------------------------------------
         #  Actors Controller
         #  ----------------------------------------------------------------
@@ -300,4 +306,4 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=8080, debug=True)

@@ -5,21 +5,14 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app
 from models import setup_db
-from settings import DB_NAME, DB_USER, DB_PASSWORD, CASTING_ASSISTANT_JWT, CASTING_DIRECTOR_JWT, EXECUTIVE_PRODUCER_JWT
 
 
 class TestCasesCapstone(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
-        self.client = self.app.test_client
-        self.database_path = "postgresql://{}:{}@{}/{}".format(DB_USER, DB_PASSWORD, 'localhost:5432', DB_NAME)
-        setup_db(self.app, self.database_path)
-
-        # binds the app to the current context
-        with self.app.app_context():
-            self.db = SQLAlchemy()
-            self.db.init_app(self.app)
-            self.db.create_all()
+        DATABASE_URL = 'postgresql://postgres:admin@localhost:5432/postgres'
+        CASTING_ASSISTANT_JWT = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IktjOUt2MG1JVEUzaFZHcnJSSHhGUSJ9.eyJpc3MiOiJodHRwczovL2Rldi1jYXBzdG9uZS1ydi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjJjMWQ2ZGIzOTVhOWY1YTBiYTcxOGYzIiwiYXVkIjoiY2Fwc3RvbmUiLCJpYXQiOjE2NTczOTc3NzAsImV4cCI6MTY1NzQwNDk3MCwiYXpwIjoiUUVHalZLeWlJQVdSM2tOWk94emRxNUtoQUpHcnRWT1EiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImdldDphY3RvcnMiLCJnZXQ6bW92aWVzIl19.AjmZ9jWWpObFhtLUhF0OMzKs8EmOjxH7qFKDjrFeLSWJH2s66jd_7wcH6MUKu_peCiOzgpe8PYkLQQ3mMeGnKRkHrQM3io73dzTzwzNKvvDCXO932n8iFokHIAg6S5ZIb__qZDTtGDbhlM4d1dYBYU7SIlYhs0jP18OLyIqSApX6XZQcI89N8fAMA7n-tLzv5PtZVlowLF4ybE2x6VsrBmJCndRzzjcElnu352EX_oXjmlZIs5KAkPRjpw2ZRnmzVsQYlWFD2ClvalL5k7os6eLN8If7-HuxjsIwXoWC8Y6HtYo_rtASQPQWcclg-7GgJ6xA4SuwO7DoXO-1pT1Sbg'
+        CASTING_DIRECTOR_JWT = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IktjOUt2MG1JVEUzaFZHcnJSSHhGUSJ9.eyJpc3MiOiJodHRwczovL2Rldi1jYXBzdG9uZS1ydi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjJjMWQ2YzBmZTA2MjkxMTYwOTJmMzlhIiwiYXVkIjoiY2Fwc3RvbmUiLCJpYXQiOjE2NTczOTc3MTAsImV4cCI6MTY1NzQwNDkxMCwiYXpwIjoiUUVHalZLeWlJQVdSM2tOWk94emRxNUtoQUpHcnRWT1EiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTphY3RvcnMiLCJnZXQ6YWN0b3JzIiwiZ2V0Om1vdmllcyIsInBvc3Q6YWN0b3JzIiwidXBkYXRlOmFjdG9ycyIsInVwZGF0ZTptb3ZpZXMiXX0.ceYdLcSsMvL0JQROt6dVe0fHtx7gPdm295Qb05W1zSXJTUS6_99lJMskdytRYHpOTgNQT_CijwJpR-9dnHr3q50zX0f9IKtnfHMJM7Bs7Xvgu4OnqnJRDA-pQ_Y36yE-aWqWN9J0BZR74v_nZXl0kh7NgY7XiGKjjExrRCOYo55y9F7qgYOKcqU4VVKBhADIP12SKL-lvBVgUVzX-J4wPXkbW9hdDEsyBC2m9_FYXuRat3J1oehPzvo8OmHE4cCKCZCqMHQ4I76t3qjmPCvglQuLN9LpzKXowrSJIGp_h1pXRNKy9Uu9Sy6qrMnyggepKYxw7BHGVX6w1ks9_PVd-w'
+        EXECUTIVE_PRODUCER_JWT = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IktjOUt2MG1JVEUzaFZHcnJSSHhGUSJ9.eyJpc3MiOiJodHRwczovL2Rldi1jYXBzdG9uZS1ydi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjJjMWQ2ZWJmZTA2MjkxMTYwOTJmM2E1IiwiYXVkIjoiY2Fwc3RvbmUiLCJpYXQiOjE2NTczOTcwNjEsImV4cCI6MTY1NzQwNDI2MSwiYXpwIjoiUUVHalZLeWlJQVdSM2tOWk94emRxNUtoQUpHcnRWT1EiLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTphY3RvcnMiLCJkZWxldGU6bW92aWVzIiwiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiLCJwb3N0OmFjdG9ycyIsInBvc3Q6bW92aWVzIiwidXBkYXRlOmFjdG9ycyIsInVwZGF0ZTptb3ZpZXMiXX0.mQiNa_XBLrFOZ82A1PMQ4K_t8SGWRgFLXlLSwBsapa0WQU6Eu2v2Mm3UPXGZONnTYbAYE9aQPV5hL7JHldFxaQxCRHmzZzAHmeIXNXxAuQ0shwCnWppPc7XOjl-jW0pBcGD0xuDNoDzbejvO6HXeEBp39iGvPwprVyytHSgNYxN9N9L5evBFUf4mUshM_NibEHoS7HGD8A0dFYX9DvMsjW_BtOuZ1HYUfb8r0zHtrfnao7MUWf8ij3mkuiaK62fTUznM5qH9YBr_Nq2cHSnAWwW2V3sQzvVVRnr2Lu15af59YR1mC9hmaVUjVu17-PLtBSJFvOv45E66q78UuxATiw'
 
         assistant_jwt = CASTING_ASSISTANT_JWT
         director_jwt = CASTING_DIRECTOR_JWT
@@ -30,6 +23,17 @@ class TestCasesCapstone(unittest.TestCase):
             "Casting Director": f'Bearer {director_jwt}',
             "Executive Producer": f'Bearer {producer_jwt}'
         }
+        self.database_path = DATABASE_URL
+
+        self.app = create_app()
+        self.client = self.app.test_client
+        setup_db(self.app, self.database_path)
+
+        # binds the app to the current context
+        with self.app.app_context():
+            self.db = SQLAlchemy()
+            self.db.init_app(self.app)
+            self.db.create_all()
 
         self.movie = {
             "title": "My Name is Khan",
@@ -397,7 +401,7 @@ class TestCasesCapstone(unittest.TestCase):
         self.assertEqual(res.status_code, 401)
         self.assertFalse(data['success'])
 
-    def test_add_movie_with_valid_role_director(self):
+    def test_add_actor_with_valid_role_director(self):
         header_obj = {
             "Authorization": self.auth_headers["Executive Producer"]
         }
@@ -458,7 +462,7 @@ class TestCasesCapstone(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
 
-    def test_delete_movie_with_valid_role_producer(self):
+    def test_delete_actor_with_valid_role_producer(self):
         header_obj = {
             "Authorization": self.auth_headers["Executive Producer"]
         }
