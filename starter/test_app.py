@@ -38,11 +38,11 @@ class TestCasesCapstone(unittest.TestCase):
         }
 
         self.actor = {
-            "name": "Sharukh Khan",
+            "name": "Shahrukh Khan",
             "age": "50",
             "gender": "M",
-            "movie_id": 5,
-            "phone": "123456666"
+            "phone": "123456666",
+            "movie_id": 5
         }
 
     def tearDown(self):
@@ -86,6 +86,52 @@ class TestCasesCapstone(unittest.TestCase):
 
     def test_get_movie_with_401(self):
         res = self.client().get('/movies')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data['success'])
+
+    #  ----------------------------------------------------------------
+    #  GET Movie by id Test Cases
+    #  ----------------------------------------------------------------
+
+    def test_get_movie_by_id_with_valid_role_assistant(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Casting Assistant"]
+        }
+        movie_id = 5
+        res = self.client().get(f'/movies/{movie_id}', headers=header_obj)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(type(data["movies"]), type([]))
+
+    def test_get_movie_by_id_with_valid_role_director(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Casting Director"]
+        }
+        movie_id = 5
+        res = self.client().get(f'/movies/{movie_id}', headers=header_obj)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(type(data["movies"]), type([]))
+
+    def test_get_movie_by_id_with_valid_role_producer(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Executive Producer"]
+        }
+        movie_id = 5
+        res = self.client().get(f'/movies/{movie_id}', headers=header_obj)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(type(data["movies"]), type([]))
+
+    def test_get_movie_by_id_with_401(self):
+        movie_id = 5
+        res = self.client().get(f'/movies/{movie_id}')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 401)
         self.assertFalse(data['success'])
@@ -194,6 +240,14 @@ class TestCasesCapstone(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertFalse(data['success'])
 
+    def test_update_movie_with_movie_401(self):
+        movie_id = 5
+        update_movie_payload = {"title": "My Name is Khan 2"}
+        res = self.client().patch(f'/movies/{movie_id}', json=update_movie_payload)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data['success'])
+
     #  ----------------------------------------------------------------
     #  DELETE Movies Test Cases
     #  ----------------------------------------------------------------
@@ -285,6 +339,50 @@ class TestCasesCapstone(unittest.TestCase):
         self.assertFalse(data['success'])
 
     #  ----------------------------------------------------------------
+    #  GET Actor By Id Test Cases
+    #  ----------------------------------------------------------------
+
+    def test_get_actor_by_id_with_valid_role_assistant(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Casting Assistant"]
+        }
+        actor_id = 4
+        res = self.client().get(f'/actors/{actor_id}', headers=header_obj)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(type(data["actors"]), type([]))
+
+    def test_get_actor_by_id_with_valid_role_director(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Casting Director"]
+        }
+        actor_id = 4
+        res = self.client().get(f'/actors/{actor_id}', headers=header_obj)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(type(data["actors"]), type([]))
+
+    def test_get_actor_by_id_with_valid_role_producer(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Executive Producer"]
+        }
+        actor_id = 4
+        res = self.client().get(f'/actors/{actor_id}', headers=header_obj)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(type(data["actors"]), type([]))
+
+    def test_get_actor_by_id_with_401(self):
+        actor_id = 4
+        res = self.client().get(f'/actors/{actor_id}')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data['success'])
+
+    #  ----------------------------------------------------------------
     #  POST Actors Test Cases
     #  ----------------------------------------------------------------
 
@@ -313,8 +411,7 @@ class TestCasesCapstone(unittest.TestCase):
         header_obj = {
             "Authorization": self.auth_headers["Executive Producer"]
         }
-        res = self.client().post(f'/actors',
-                                 json=self.actor, headers=header_obj)
+        res = self.client().post(f'/actors', json=self.actor, headers=header_obj)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 201)
@@ -340,8 +437,8 @@ class TestCasesCapstone(unittest.TestCase):
         header_obj = {
             "Authorization": self.auth_headers["Casting Assistant"]
         }
-        movie_id = 4
-        res = self.client().delete(f'/actors/{movie_id}', headers=header_obj)
+        actor_id = 4
+        res = self.client().delete(f'/actors/{actor_id}', headers=header_obj)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
@@ -388,6 +485,65 @@ class TestCasesCapstone(unittest.TestCase):
     def test_delete_actor_with_401(self):
         actor_id = 5
         res = self.client().delete(f'/actors/{actor_id}')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data['success'])
+
+    #  ----------------------------------------------------------------
+    #  PATCH Actors Test Cases
+    #  ----------------------------------------------------------------
+
+    def test_update_actor_with_valid_invalid_role_assistant_unauthorised(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Casting Assistant"]
+        }
+        actor_id = 4
+        res = self.client().patch(f'/actors/{actor_id}',
+                                  json=self.actor, headers=header_obj)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data['success'])
+
+    def test_update_actor_with_valid_role_director(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Casting Director"]
+        }
+        actor_id = 4
+        res = self.client().patch(f'/actors/{actor_id}',
+                                  json=self.actor, headers=header_obj)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 201)
+        self.assertTrue(data['success'])
+
+    def test_update_actor_with_valid_role_producer(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Executive Producer"]
+        }
+        actor_id = 4
+        res = self.client().patch(f'/actors/{actor_id}',
+                                  json=self.actor, headers=header_obj)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 201)
+        self.assertTrue(data['success'])
+
+    def test_update_actor_with_actor_not_found(self):
+        header_obj = {
+            "Authorization": self.auth_headers["Executive Producer"]
+        }
+        actor_id = -1
+        update_actor_payload = {"name": "Sunil Shetty"}
+        res = self.client().patch(f'/actors/{actor_id}',
+                                  json=update_actor_payload, headers=header_obj)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertFalse(data['success'])
+
+    def test_update_actor_with_401(self):
+        actor_id = 4
+        res = self.client().patch(f'/actors/{actor_id}',
+                                  json=self.actor)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 401)
         self.assertFalse(data['success'])

@@ -49,7 +49,7 @@ def create_app(test_config=None):
         if not actor_by_id:
             abort(404, 'Actor with id: ' + str(id) + ' could not be found.')
         else:
-            actor_by_id_list = list(map(lambda actors: actors.get_actor, actor_by_id))
+            actor_by_id_list = [actor_by_id.get_actor]
         return jsonify({
             "success": True,
             "actors": actor_by_id_list,
@@ -159,7 +159,7 @@ def create_app(test_config=None):
         if not movie_by_id:
             abort(404, 'Movie with id: ' + str(id) + ' could not be found.')
         else:
-            movie_by_id_list = list(map(lambda movies: movies.get_movie, movie_by_id))
+            movie_by_id_list = [movie_by_id.get_movie];
         return jsonify({
             "success": True,
             "movies": movie_by_id_list,
